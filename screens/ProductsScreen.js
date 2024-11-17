@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Rectangle from "../components/Rectangle";
 import Filter from "../components/Filter";
 import Products from "../components/Products";
+import Pagination from "../components/Pagination";
 
 const ProductsScreen = () => {
   return (
@@ -15,6 +16,9 @@ const ProductsScreen = () => {
         <View>
           <Text style={styles.name}>Products</Text>
           <Products />
+        </View>
+        <View>
+          <Pagination />
         </View>
       </ScrollView>
     </View>

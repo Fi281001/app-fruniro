@@ -1,19 +1,29 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import React from "react";
 import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 const Header = () => {
+  const nav = useNavigation();
+  const redirect = () => {
+    nav.navigate("Cart");
+  };
+  const redirectHome = () => {
+    nav.navigate("Home");
+  };
   return (
     <View style={styles.navbar}>
-      <View style={styles.logomain}>
-        <Image style={styles.logo} source={require("../img/logo.png")} />
-        <Text style={styles.shopName}>Frurimo</Text>
-      </View>
+      <TouchableOpacity onPress={() => redirectHome()}>
+        <View style={styles.logomain}>
+          <Image style={styles.logo} source={require("../img/logo.png")} />
+          <Text style={styles.shopName}>Frurimo</Text>
+        </View>
+      </TouchableOpacity>
 
       <View style={styles.iconContainer}>
         <TouchableOpacity style={styles.iconButton}>
           <FontAwesome name="heart" size={24} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
+        <TouchableOpacity style={styles.iconButton} onPress={() => redirect()}>
           <MaterialIcons name="shopping-cart" size={26} color="black" />
         </TouchableOpacity>
       </View>

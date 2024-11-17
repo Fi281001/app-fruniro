@@ -1,10 +1,15 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
 
 const SettingScreen = () => {
+  const nav = useNavigation();
+  const redirectLogin = () => {
+    nav.navigate("Login");
+  };
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={() => redirectLogin()}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
     </View>

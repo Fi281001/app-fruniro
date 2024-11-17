@@ -29,6 +29,7 @@ const CartScreen = () => {
         </TouchableOpacity>
 
         <Text style={styles.headertext}>My Cart</Text>
+        <View></View>
       </View>
       {/* cart list */}
       <View style={styles.cart}>
@@ -131,16 +132,18 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   button: {
-    backgroundColor: "#E96E6E",
+    backgroundColor: "white",
     height: 60,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
     marginTop: 30,
+    borderWidth: 2,
+    borderColor: "#b88e2f",
   },
   buttonText: {
     fontSize: 24,
-    color: "#FFFFFF",
+    color: "black",
     fontWeight: "700",
   },
   cart: {

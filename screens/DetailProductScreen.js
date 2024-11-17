@@ -26,6 +26,9 @@ const DetailProductScreen = () => {
   const gotoProducts = () => {
     nav.navigate("Products");
   };
+  const redirectCart = () => {
+    nav.navigate("Cart");
+  };
   return (
     <View>
       <ScrollView>
@@ -37,7 +40,9 @@ const DetailProductScreen = () => {
               </TouchableOpacity>
             </View>
             <View style={styles.icon}>
-              <MaterialIcons name="shopping-cart" size={26} color="black" />
+              <TouchableOpacity onPress={() => redirectCart()}>
+                <MaterialIcons name="shopping-cart" size={26} color="black" />
+              </TouchableOpacity>
             </View>
           </View>
           <Image
@@ -228,11 +233,13 @@ const DetailProductScreen = () => {
               />
             </View>
           </View>
-          {/* Related Products */}
         </View>
         {/* Related Products */}
 
         <View style={styles.product}>
+          <View style={styles.Related}>
+            <Text style={styles.titleRelated}>Related Products</Text>
+          </View>
           <Products show={6} />
           <TouchableOpacity
             style={styles.containerButton}
@@ -430,5 +437,11 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     color: "black", // Màu chữ vàng
+  },
+  titleRelated: {
+    textAlign: "center",
+    fontSize: 24,
+    fontWeight: "700",
+    marginBottom: 20,
   },
 });
