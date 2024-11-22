@@ -1,3 +1,4 @@
+import React, { useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -5,40 +6,79 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
+import { MaterialIcons } from "@expo/vector-icons";
 
-const Pagination = () => {
-  const data = Array.from({ length: 10 }, (_, i) => `Item ${i + 1}`);
+const Pagination = ({ currentPage, totalPages, onPageChange, data }) => {
+  const listRef = useRef(null); // Tạo tham chiếu tới FlatList
 
-  const renderItem = ({ item }) => (
-    <View style={styles.item}>
-      <Text style={styles.text}>{item}</Text>
-    </View>
-  );
+  const handlePageChange = (page) => {
+    onPageChange(page); // Gọi hàm chuyển trang
+    if (listRef.current) {
+      listRef.current.scrollToOffset({ offset: 0, animated: true }); // Cuộn lên đầu danh sách
+    }
+  };
+
+  const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
 
   return (
     <View style={styles.container}>
+      <FlatList
+        ref={listRef} // Gắn ref cho FlatList
+        data={data}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <Text style={styles.text}>{item}</Text>
+          </View>
+        )}
+      />
       <View style={styles.pagination}>
-        <TouchableOpacity style={styles.pageButton}>
-          <Text style={styles.pageText}>Previous</Text>
+        <TouchableOpacity
+          style={[
+            styles.pageButton,
+            currentPage === 1 && styles.disabledButton,
+          ]}
+          onPress={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          <MaterialIcons name="chevron-left" size={26} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.pageButton, styles.activePage]}>
-          <Text style={[styles.pageText, styles.activeText]}>1</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.pageButton}>
-          <Text style={styles.pageText}>2</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.pageButton}>
-          <Text style={styles.pageText}>3</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.pageButton}>
-          <Text style={styles.pageText}>Next</Text>
+        {pages.map((page) => (
+          <TouchableOpacity
+            key={page}
+            style={[
+              styles.pageButton,
+              currentPage === page && styles.activePage,
+            ]}
+            onPress={() => handlePageChange(page)}
+          >
+            <Text
+              style={[
+                styles.pageText,
+                currentPage === page && styles.activeText,
+              ]}
+            >
+              {page}
+            </Text>
+          </TouchableOpacity>
+        ))}
+        <TouchableOpacity
+          style={[
+            styles.pageButton,
+            currentPage === totalPages && styles.disabledButton,
+          ]}
+          onPress={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          <MaterialIcons name="navigate-next" size={26} color="black" />
         </TouchableOpacity>
       </View>
     </View>
   );
 };
+
 export default Pagination;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -77,10 +117,14 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   activePage: {
-    backgroundColor: "#007BFF",
-    borderColor: "#007BFF",
+    backgroundColor: "#b88e2f",
+    borderColor: "#b88e2f",
   },
   activeText: {
     color: "#fff",
+  },
+  disabledButton: {
+    backgroundColor: "#f0f0f0",
+    borderColor: "#ddd",
   },
 });

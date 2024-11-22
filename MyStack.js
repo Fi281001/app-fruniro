@@ -9,6 +9,7 @@ import ProductsScreen from "./screens/ProductsScreen";
 import BlogScreen from "./screens/BlogScreen";
 import SettingScreen from "./screens/SettingScreen";
 import LoginAndRegister from "./screens/LoginAndRegister";
+import CompareScreen from "./screens/CompareScreen";
 import MyTab from "./MyTab";
 const Stack = createStackNavigator();
 const MyStack = () => {
@@ -21,11 +22,7 @@ const MyStack = () => {
           component={HomeScreen}
           options={{ headerShown: false }}
         />
-        <Stack.Screen
-          name="Detail"
-          component={DetailProductScreen}
-          options={{ headerTitle: "Detail Product" }}
-        />
+        <Stack.Screen name="Detail" component={DetailProductScreen} />
         <Stack.Screen
           name="Cart"
           component={CartScreen}
@@ -49,6 +46,11 @@ const MyStack = () => {
         <Stack.Screen
           name="Login"
           component={LoginAndRegister}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Compare"
+          component={CompareScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

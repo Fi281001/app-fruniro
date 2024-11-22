@@ -5,20 +5,49 @@ import Rectangle from "../components/Rectangle";
 import Filter from "../components/Filter";
 import Products from "../components/Products";
 import Pagination from "../components/Pagination";
-
+import { useState, useEffect } from "react";
 const ProductsScreen = () => {
+  const [showValue, setShowValue] = useState("12");
+  const handleShowValueChange = (value) => {
+    setShowValue(value);
+  };
+  const [sortvalue, setSortvalue] = useState("asc");
+  const handleSortValueChange = (value) => {
+    setSortvalue(value);
+  };
+  const [length, setLength] = useState(0);
+  const handleLengthChange = (value) => {
+    setLength(value); // Cập nhật length
+  };
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(length / showValue); // Tính tổng số trang
+
+  const handlePageChange = (page) => setCurrentPage(page);
   return (
     <View>
       <Header />
       <ScrollView>
         <Rectangle title="Shop" />
-        <Filter />
+        <Filter
+          onHandleShowValueChange={handleShowValueChange}
+          onHandleSortValueChange={handleSortValueChange}
+        />
         <View>
           <Text style={styles.name}>Products</Text>
-          <Products />
+          <Products
+            onLengthChange={handleLengthChange}
+            ShowValue={showValue}
+            SortValue={sortvalue}
+            currentPage={currentPage}
+          />
         </View>
         <View>
-          <Pagination />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </View>
       </ScrollView>
     </View>

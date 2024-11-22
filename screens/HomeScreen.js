@@ -5,7 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import Header from "../components/Header";
 import Banner from "../components/Banner";
 import Ranger from "../components/Ranger";
@@ -14,9 +14,23 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 const HomeScreen = () => {
   const navigation = useNavigation();
 
-  const gotoProducts = () => {
-    navigation.navigate("Products");
+  // const gotoProducts = () => {
+  //   navigation.navigate("Products");
+  // };
+  const [showValue, setShowValue] = useState(4);
+  const handleShowValueChange = (value) => {
+    setShowValue(value);
   };
+
+  const plus4 = () => {
+    setShowValue((prevItem) => prevItem + 4);
+  };
+
+  const [length, setLength] = useState(0);
+  const handleLengthChange = (value) => {
+    setLength(value); // Cập nhật length
+  };
+  const isShowMoreDisabled = showValue >= length;
   return (
     <View>
       <Header />
@@ -25,10 +39,17 @@ const HomeScreen = () => {
         <Ranger />
         <View>
           <Text style={styles.name}>Our Products</Text>
-          <Products show={4} />
+          {/* <Products
+          // show={item}
+          /> */}
+          <Products onLengthChange={handleLengthChange} ShowValue={showValue} />
           <TouchableOpacity
-            style={styles.containerButton}
-            onPress={() => gotoProducts()}
+            style={[
+              styles.containerButton,
+              isShowMoreDisabled && styles.disabledButton,
+            ]}
+            onPress={() => plus4()}
+            disabled={isShowMoreDisabled} // Disable button khi không còn sản phẩm
           >
             <View style={styles.button}>
               <Text style={styles.buttonText}>See more</Text>
@@ -66,5 +87,8 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     color: "black", // Màu chữ vàng
+  },
+  disabledButton: {
+    opacity: 0.5, // Giảm độ mờ khi nút bị vô hiệu hóa
   },
 });

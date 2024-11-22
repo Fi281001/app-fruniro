@@ -19,9 +19,19 @@ const colorsArray = [
   "#000000",
 ];
 const DetailProductScreen = () => {
+  const [showValue, setShowValue] = useState(4);
+  const handleShowValueChange = (value) => {
+    setShowValue(value);
+  };
+  // const [item, setItem] = useState(4);
+  const plus4 = () => {
+    setShowValue((prevItem) => prevItem + 4);
+  };
+  const route = useRoute();
+  const { imgSrc, title, id, price, pricesale, name } = route.params || {};
   const [selectedSize, setSelectedSize] = useState("M");
   const [selectedColor, setSelectedColor] = useState("#B11D1D");
-
+  const [quantity, setQuantity] = useState(1);
   const nav = useNavigation();
   const gotoProducts = () => {
     nav.navigate("Products");
@@ -29,34 +39,47 @@ const DetailProductScreen = () => {
   const redirectCart = () => {
     nav.navigate("Cart");
   };
+  const redirectCompare = () => {
+    nav.navigate("Compare");
+  };
+  const increaseQuantity = () => {
+    setQuantity((prevQuantity) => prevQuantity + 1);
+  };
+
+  const decreaseQuantity = () => {
+    setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1)); // Không giảm dưới 1
+  };
+  const [length, setLength] = useState(0);
+  const handleLengthChange = (value) => {
+    setLength(value); // Cập nhật length
+  };
+  const isShowMoreDisabled = showValue >= length;
   return (
     <View>
+      <View style={styles.iconContainer}>
+        <View style={styles.icon}>
+          <TouchableOpacity onPress={() => nav.goBack()}>
+            <MaterialIcons name="arrow-back" size={30} color="black" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.icon}>
+          <TouchableOpacity onPress={() => redirectCart()}>
+            <MaterialIcons name="shopping-cart" size={26} color="black" />
+          </TouchableOpacity>
+        </View>
+      </View>
       <ScrollView>
         <View style={styles.imagecontainer}>
-          <View style={styles.iconContainer}>
-            <View style={styles.icon}>
-              <TouchableOpacity onPress={() => nav.goBack()}>
-                <MaterialIcons name="arrow-back" size={30} color="black" />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.icon}>
-              <TouchableOpacity onPress={() => redirectCart()}>
-                <MaterialIcons name="shopping-cart" size={26} color="black" />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <Image
-            source={require("../img/products/image1.png")}
-            style={styles.image}
-          />
+          <Image source={{ uri: imgSrc }} style={styles.image} />
         </View>
         <View style={styles.containercontent}>
           {/* Title and Price in the same row */}
           <View
             style={{ flexDirection: "column", justifyContent: "space-between" }}
           >
-            <Text style={styles.title}>Leviosa</Text>
-            <Text style={styles.price}>2.500.000</Text>
+            <Text style={styles.title}>{name}</Text>
+            <Text style={styles.price}>Rp {pricesale}</Text>
+            <Text style={styles.price2}>{price}</Text>
           </View>
 
           {/* Star Rating */}
@@ -185,11 +208,17 @@ const DetailProductScreen = () => {
           <View style={styles.actionsContainer}>
             {/* Nút Cập nhật số lượng */}
             <View style={styles.updateQuantityContainer}>
-              <TouchableOpacity style={styles.iconButton}>
+              <TouchableOpacity
+                style={styles.iconButton}
+                onPress={decreaseQuantity}
+              >
                 <MaterialIcons name="remove" size={20} color="#b88e2f" />
               </TouchableOpacity>
-              <Text style={styles.quantityText}>1</Text>
-              <TouchableOpacity style={styles.iconButton}>
+              <Text style={styles.quantityText}>{quantity}</Text>
+              <TouchableOpacity
+                style={styles.iconButton}
+                onPress={increaseQuantity}
+              >
                 <MaterialIcons name="add" size={20} color="#b88e2f" />
               </TouchableOpacity>
             </View>
@@ -199,7 +228,10 @@ const DetailProductScreen = () => {
             </TouchableOpacity>
 
             {/* Nút So sánh */}
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => redirectCompare()}
+            >
               <Text style={styles.buttonText}>Compare</Text>
             </TouchableOpacity>
           </View>
@@ -240,10 +272,14 @@ const DetailProductScreen = () => {
           <View style={styles.Related}>
             <Text style={styles.titleRelated}>Related Products</Text>
           </View>
-          <Products show={6} />
+          <Products onLengthChange={handleLengthChange} ShowValue={showValue} />
           <TouchableOpacity
-            style={styles.containerButton}
-            onPress={() => gotoProducts()}
+            style={[
+              styles.containerButton,
+              isShowMoreDisabled && styles.disabledButton,
+            ]}
+            onPress={() => plus4()}
+            disabled={isShowMoreDisabled} // Disable button khi không còn sản phẩm
           >
             <View style={styles.button}>
               <Text style={styles.buttonText}>See more</Text>
@@ -265,12 +301,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   iconContainer: {
-    marginTop: 30,
+    marginTop: 40,
     position: "absolute", // Để các icon nổi lên trên hình ảnh
-    top: 10, // Cách cạnh trên của ảnh một chút
-    left: 10, // Cách cạnh trái một chút
-    right: 10, // Cách cạnh phải một chút
     flexDirection: "row",
+    height: 50,
     justifyContent: "space-between", // Đặt các icon ra hai bên
     width: "100%", // Để các icon trải rộng ngang
     zIndex: 10, // Đảm bảo các icon hiển thị lên trên ảnh
@@ -302,6 +336,12 @@ const styles = StyleSheet.create({
     color: "#333",
     fontWeight: "600",
   },
+  price2: {
+    fontSize: 16,
+    color: "red",
+    fontWeight: "300",
+    textDecorationLine: "line-through",
+  },
   starContainer: {
     flexDirection: "row",
     marginVertical: 10,
@@ -327,16 +367,16 @@ const styles = StyleSheet.create({
   },
   sizeValueContainer: {
     backgroundColor: "#FFFFFF",
-    height: 40,
-    width: 40,
+    height: 50,
+    width: 50,
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 5,
   },
   sizeValueText: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 16,
+    fontWeight: "600",
   },
   selectedText: {
     color: "#E55B5B",
@@ -443,5 +483,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "700",
     marginBottom: 20,
+  },
+  disabledButton: {
+    opacity: 0.5, // Giảm độ mờ khi nút bị vô hiệu hóa
   },
 });
