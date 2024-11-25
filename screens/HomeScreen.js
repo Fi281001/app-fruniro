@@ -11,6 +11,8 @@ import Banner from "../components/Banner";
 import Ranger from "../components/Ranger";
 import Products from "../components/Products";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import Slider from "../components/Slider";
+
 const HomeScreen = () => {
   const navigation = useNavigation();
 
@@ -56,6 +58,7 @@ const HomeScreen = () => {
             </View>
           </TouchableOpacity>
         </View>
+        <Slider />
       </ScrollView>
     </View>
   );

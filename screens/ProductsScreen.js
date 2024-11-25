@@ -5,7 +5,7 @@ import Rectangle from "../components/Rectangle";
 import Filter from "../components/Filter";
 import Products from "../components/Products";
 import Pagination from "../components/Pagination";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 const ProductsScreen = () => {
   const [showValue, setShowValue] = useState("12");
   const handleShowValueChange = (value) => {
@@ -22,12 +22,18 @@ const ProductsScreen = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(length / showValue); // Tính tổng số trang
-
-  const handlePageChange = (page) => setCurrentPage(page);
+  const scrollRef = useRef(null);
+  const handlePageChange = (page) => {
+    setCurrentPage(page); // Thay đổi trang hiện tại
+    if (scrollRef.current) {
+      // Cuộn lên đầu khi đổi trang
+      scrollRef.current.scrollTo({ y: 0, animated: true });
+    }
+  };
   return (
     <View>
       <Header />
-      <ScrollView>
+      <ScrollView ref={scrollRef}>
         <Rectangle title="Shop" />
         <Filter
           onHandleShowValueChange={handleShowValueChange}

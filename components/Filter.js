@@ -82,7 +82,7 @@ const Filter = ({ onHandleShowValueChange, onHandleSortValueChange }) => {
             name="filter"
             size={30}
             color="black"
-            style={{ marginRight: 10 }}
+            style={{ marginRight: 10, paddingLeft: 10 }}
           />
           <Text style={{ fontSize: 24, marginRight: 10 }}>|</Text>
           <Text style={{ fontSize: 20 }}>

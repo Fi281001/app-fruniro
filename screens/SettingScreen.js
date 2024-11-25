@@ -1,16 +1,44 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import React from "react";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState, useCallback } from "react";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SettingScreen = () => {
   const nav = useNavigation();
-  const redirectLogin = () => {
-    nav.navigate("Login");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Hàm kiểm tra trạng thái đăng nhập
+  const checkLoginStatus = async () => {
+    const userData = await AsyncStorage.getItem("userData");
+    setIsLoggedIn(!!userData); // Cập nhật trạng thái đăng nhập
   };
+
+  // Lắng nghe khi màn hình được focus
+  useFocusEffect(
+    useCallback(() => {
+      checkLoginStatus();
+    }, [])
+  );
+
+  // Hàm xử lý khi nhấn nút
+  const handleButtonPress = async () => {
+    if (isLoggedIn) {
+      // Logout: Xóa dữ liệu userData
+      await AsyncStorage.removeItem("userData");
+      console.log("Logged out successfully");
+      setIsLoggedIn(false); // Cập nhật trạng thái đăng xuất
+    } else {
+      // Login: Chuyển hướng đến màn hình Login
+      nav.navigate("Login");
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={() => redirectLogin()}>
-        <Text style={styles.buttonText}>Login</Text>
+      <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
+        <Text style={styles.buttonText}>
+          {isLoggedIn ? "Logout" : "Login"} {/* Hiển thị trạng thái */}
+        </Text>
       </TouchableOpacity>
     </View>
   );

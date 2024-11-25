@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import Products from "../components/Products";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -54,6 +54,20 @@ const DetailProductScreen = () => {
     setLength(value); // Cập nhật length
   };
   const isShowMoreDisabled = showValue >= length;
+  //  cuộn lên đầu khi màn render
+  const scrollRef = useRef(null);
+  useEffect(() => {
+    // Cuộn lên đầu khi màn hình được render
+    setTimeout(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTo({ y: 0, animated: true });
+      }
+    }, 2000);
+  }, [route.params]);
+  // xử lý add to cart
+  const handldeAddtoCart = () => {
+    console.log("add to cart");
+  };
   return (
     <View>
       <View style={styles.iconContainer}>
@@ -68,7 +82,7 @@ const DetailProductScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView>
+      <ScrollView ref={scrollRef}>
         <View style={styles.imagecontainer}>
           <Image source={{ uri: imgSrc }} style={styles.image} />
         </View>
@@ -223,7 +237,10 @@ const DetailProductScreen = () => {
               </TouchableOpacity>
             </View>
             {/* Nút Add to Cart */}
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handldeAddtoCart()}
+            >
               <Text style={styles.buttonText}>Add to Cart</Text>
             </TouchableOpacity>
 

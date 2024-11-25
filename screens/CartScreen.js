@@ -6,7 +6,7 @@ import {
   FlatList,
 } from "react-native";
 import React, { useState } from "react";
-import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import data from "../data/data.json";
 import CartForm from "../components/CartForm";
 import { useNavigation } from "@react-navigation/native";
@@ -18,6 +18,7 @@ const CartScreen = () => {
   const handleBack = () => {
     nav.goBack();
   };
+
   return (
     <View style={styles.cartcontainer}>
       <View style={styles.header}>
@@ -31,6 +32,7 @@ const CartScreen = () => {
         <Text style={styles.headertext}>My Cart</Text>
         <View></View>
       </View>
+
       {/* cart list */}
       <View style={styles.cart}>
         <FlatList
@@ -43,14 +45,14 @@ const CartScreen = () => {
       </View>
 
       {/* footer cart check out */}
-      <View>
+      <View style={styles.footer}>
         <View style={styles.bottomContentContainer}>
           <View style={styles.flexRowContainer}>
             <Text style={styles.titleText}>Total:</Text>
             <Text style={styles.priceText}>299999</Text>
           </View>
           <View style={styles.flexRowContainer}>
-            <Text style={styles.titleText}>Shpping:</Text>
+            <Text style={styles.titleText}>Shipping:</Text>
             <Text style={styles.priceText}>$0.0</Text>
           </View>
           <View style={styles.divider} />
@@ -69,18 +71,16 @@ const CartScreen = () => {
   );
 };
 
-export default CartScreen;
-
 const styles = StyleSheet.create({
   cartcontainer: {
+    flex: 1, // Thêm flex để chiếm hết không gian màn hình
     marginTop: 50,
-    paddingHorizontal: 20,
   },
   header: {
-    display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    paddingHorizontal: 20,
   },
   appDrawerContainer: {
     backgroundColor: "white",
@@ -90,27 +90,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  appBackIcon: {
-    height: 30,
-    width: 30,
-    marginLeft: 10,
-  },
   headertext: {
     fontSize: 28,
     fontWeight: "400",
   },
-  cart: {
-    marginTop: 50,
-  },
+
   flexRowContainer: {
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     marginVertical: 5,
   },
-  bottomContentContainer: {
-    marginHorizontal: 10,
-    marginTop: 30,
+  footer: {
+    width: "100%",
+    backgroundColor: "#fff", // Cần có màu nền để shadow hiển thị
+    shadowColor: "#000", // Màu bóng
+    shadowOffset: { width: 0, height: 2 }, // Độ lệch của bóng (x, y)
+    shadowOpacity: 0.25, // Độ mờ của bóng (0 đến 1)
+    shadowRadius: 3.84, // Bán kính làm mờ bóng
+    elevation: 5, // Bóng cho Android
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    paddingVertical: 20,
   },
+
   titleText: {
     fontSize: 18,
     color: "#757575",
@@ -147,6 +150,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   cart: {
-    height: "65%",
+    flex: 1, // Để chiếm phần không gian còn lại
+    paddingHorizontal: 20,
   },
 });
+
+export default CartScreen;
