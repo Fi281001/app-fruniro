@@ -41,7 +41,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, data }) => {
           onPress={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          <MaterialIcons name="chevron-left" size={26} color="black" />
+          <MaterialIcons name="chevron-left" size={18} color="black" />
         </TouchableOpacity>
         {pages.map((page) => (
           <TouchableOpacity
@@ -70,7 +70,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, data }) => {
           onPress={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          <MaterialIcons name="navigate-next" size={26} color="black" />
+          <MaterialIcons name="navigate-next" size={18} color="black" />
         </TouchableOpacity>
       </View>
     </View>
@@ -82,7 +82,7 @@ export default Pagination;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#red",
     padding: 10,
   },
   item: {

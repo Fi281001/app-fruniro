@@ -9,6 +9,8 @@ const Products = ({
   SortValue,
   onLengthChange,
   currentPage,
+  minValue,
+  maxValue,
 }) => {
   const navigation = useNavigation();
   const route = useRoute(); // Lấy route hiện tại để kiểm tra màn hình
@@ -55,12 +57,16 @@ const Products = ({
       )
     );
   }
+  let filteredProducts = sortedProducts.filter((item) => {
+    const priceSale = parseFloat(item?.pricesale.replace(/\./g, ""));
+    return priceSale >= minValue && priceSale <= maxValue;
+  });
 
-  const displayItems = sortedProducts.slice(0, parseInt(ShowValue));
+  const displayItems = data.slice(0, parseInt(ShowValue));
 
   // Pagination
   const startIndex = (currentPage - 1) * parseInt(ShowValue, 10);
-  const paginatedProducts = sortedProducts.slice(
+  const paginatedProducts = filteredProducts.slice(
     startIndex,
     startIndex + parseInt(ShowValue, 10)
   );

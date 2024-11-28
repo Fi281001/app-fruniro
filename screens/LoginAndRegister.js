@@ -88,9 +88,9 @@ const LoginAndRegister = () => {
           index: 0,
           routes: [{ name: "Tabs" }], // Điều hướng đến màn hình Tabs
         });
-      }, 3000);
+      }, 2000);
       const storedData = await AsyncStorage.getItem("userData");
-      console.log("token", storedData);
+      console.log("token_login", storedData);
     } catch (error) {
       showSnackbar("Wrong password or Email", "error");
     }

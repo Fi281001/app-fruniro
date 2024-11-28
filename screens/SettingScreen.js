@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { getAuth, signOut } from "firebase/auth"; // Import signOut để đăng xuất
 const SettingScreen = () => {
+  const auth = getAuth();
   const nav = useNavigation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -24,7 +25,8 @@ const SettingScreen = () => {
   const handleButtonPress = async () => {
     if (isLoggedIn) {
       // Logout: Xóa dữ liệu userData
-      await AsyncStorage.removeItem("userData");
+      await AsyncStorage.clear();
+      await signOut(auth);
       console.log("Logged out successfully");
       setIsLoggedIn(false); // Cập nhật trạng thái đăng xuất
     } else {

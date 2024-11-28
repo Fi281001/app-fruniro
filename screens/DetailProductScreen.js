@@ -9,7 +9,11 @@ import {
 import React, { useState, useRef, useEffect } from "react";
 import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import Products from "../components/Products";
+
+import { useDispatch, useSelector } from "react-redux";
+import { selectCart, addToCartAsync, getCartAsync } from "../redux/CartSlice";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { Snackbar } from "react-native-paper";
 const colorsArray = [
   "#91A1B0",
   "#B11D1D",
@@ -64,12 +68,38 @@ const DetailProductScreen = () => {
       }
     }, 2000);
   }, [route.params]);
-  // xử lý add to cart
-  const handldeAddtoCart = () => {
-    console.log("add to cart");
+
+  // redux add to cart
+
+  const dispatch = useDispatch();
+  const cart = useSelector(selectCart);
+  const handleAddToCart = () => {
+    const cartItem = {
+      id,
+      name,
+      imgSrc,
+      price,
+      pricesale,
+      selectedSize,
+      selectedColor,
+      quantity,
+    };
+    dispatch(addToCartAsync(cartItem));
+    alert("add to cart successful");
   };
+
+  useEffect(() => {
+    dispatch(getCartAsync()); // Chắc chắn bạn gọi hàm ở đây với dấu ngoặc ()
+  }, [dispatch]); // Chỉ chạy khi `dispatch` thay đổi, nếu cần thiết có thể thêm các dependencies khác
+
+  const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
   return (
-    <View>
+    <View
+      style={{
+        zIndex: 1,
+        position: "relative",
+      }}
+    >
       <View style={styles.iconContainer}>
         <View style={styles.icon}>
           <TouchableOpacity onPress={() => nav.goBack()}>
@@ -79,6 +109,13 @@ const DetailProductScreen = () => {
         <View style={styles.icon}>
           <TouchableOpacity onPress={() => redirectCart()}>
             <MaterialIcons name="shopping-cart" size={26} color="black" />
+            <View style={styles.cartBadge}>
+              {totalQuantity > 0 ? (
+                <Text style={styles.cartBadgeText}>{totalQuantity}</Text>
+              ) : (
+                <Text style={styles.cartBadgeText}>0</Text>
+              )}
+            </View>
           </TouchableOpacity>
         </View>
       </View>
@@ -237,10 +274,7 @@ const DetailProductScreen = () => {
               </TouchableOpacity>
             </View>
             {/* Nút Add to Cart */}
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handldeAddtoCart()}
-            >
+            <TouchableOpacity style={styles.button} onPress={handleAddToCart}>
               <Text style={styles.buttonText}>Add to Cart</Text>
             </TouchableOpacity>
 
@@ -503,5 +537,21 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     opacity: 0.5, // Giảm độ mờ khi nút bị vô hiệu hóa
+  },
+  cartBadge: {
+    position: "absolute",
+    top: -5,
+    right: -10,
+    backgroundColor: "#b88e2f",
+    borderRadius: 12,
+    width: 20,
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cartBadgeText: {
+    color: "white",
+    fontSize: 12,
+    fontWeight: "bold",
   },
 });

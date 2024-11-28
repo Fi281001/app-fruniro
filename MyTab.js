@@ -21,7 +21,8 @@ const MyTab = () => {
           backgroundColor: "#fff",
           borderTopWidth: 2,
           borderTopColor: "#fff",
-          height: 85,
+          height: 70,
+          paddingBottom: 20,
         },
       }}
     >
