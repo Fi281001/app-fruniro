@@ -46,7 +46,6 @@ export const addToCartAsync = (cartItem) => async (dispatch) => {
       const cartLocal = await AsyncStorage.getItem("cart");
       const localCart = cartLocal ? JSON.parse(cartLocal) : {};
 
-      console.log("Giỏ hàng hiện tại trong AsyncStorage:", localCart);
       const existingQuantity = localCart[cartItem.id]
         ? localCart[cartItem.id].quantity
         : 0;
@@ -110,7 +109,6 @@ export const getCartAsync = () => async (dispatch) => {
         const localCart = storedCart ? JSON.parse(storedCart) : {};
         const cartArray = Object.values(localCart);
 
-        console.log("Giỏ hàng lấy từ AsyncStorage:", cartArray);
         dispatch(setCart(cartArray)); // Lưu giỏ hàng local vào Redux store
       }
     } catch (error) {

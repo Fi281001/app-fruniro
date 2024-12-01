@@ -9,7 +9,7 @@ import {
 import React from "react";
 import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 const CompareScreen = () => {
   const nav = useNavigation();
   const redirectCart = () => {
@@ -18,6 +18,10 @@ const CompareScreen = () => {
   const handleBack = () => {
     nav.goBack();
   };
+
+  const route = useRoute();
+  const { imgSrc, title, id, price, pricesale, name } = route.params;
+
   return (
     <View style={styles.comparecontainer}>
       <View style={styles.header}>
@@ -39,11 +43,8 @@ const CompareScreen = () => {
         <ScrollView>
           <View style={styles.imgcontainer}>
             <View>
-              <Image
-                source={require("../img/banner2.png")}
-                style={styles.image}
-              />
-              <Text style={styles.name}>Name</Text>
+              <Image source={{ uri: imgSrc }} style={styles.image} />
+              <Text style={styles.name}>{name}</Text>
               <View style={styles.starContainer}>
                 <MaterialIcons name="star" size={20} color="black" />
                 <MaterialIcons name="star" size={20} color="black" />

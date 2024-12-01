@@ -44,7 +44,14 @@ const DetailProductScreen = () => {
     nav.navigate("Cart");
   };
   const redirectCompare = () => {
-    nav.navigate("Compare");
+    nav.navigate("Compare", {
+      imgSrc,
+      title,
+      name,
+      id,
+      pricesale,
+      price,
+    });
   };
   const increaseQuantity = () => {
     setQuantity((prevQuantity) => prevQuantity + 1);

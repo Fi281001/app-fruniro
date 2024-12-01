@@ -62,15 +62,13 @@ const CartScreen = () => {
   // check out
   const handleCheckOut = async () => {
     try {
-      // Kiểm tra nếu userData có trong AsyncStorage
       const userData = await AsyncStorage.getItem("userData");
-      console.log("token_setting", userData); // In ra token để kiểm tra
+      console.log("userData:", userData);
+
       if (userData) {
-        // Nếu userData tồn tại, thông báo checkout thành công
-        alert("checkOut thành công");
+        alert("CheckOut thành công!");
         dispatch(clearCartAsync());
       } else {
-        // Nếu không có userData, chuyển qua trang login
         Alert.alert(
           "Chưa đăng nhập",
           "Bạn chưa đăng nhập. Bạn có muốn chuyển đến trang login?",
@@ -78,22 +76,27 @@ const CartScreen = () => {
             {
               text: "Hủy",
               onPress: () => console.log("Đã hủy chuyển đến login"),
-              style: "cancel", // Nếu người dùng chọn hủy
+              style: "cancel",
             },
             {
               text: "OK",
               onPress: () => {
                 console.log("Chuyển đến trang login");
-                nav.navigate("Login"); // Điều hướng đến trang login
+                try {
+                  nav.navigate("Login");
+                } catch (error) {
+                  console.error("Không thể chuyển đến trang Login:", error);
+                }
               },
             },
           ]
         );
       }
     } catch (error) {
-      console.error("Lỗi khi kiểm tra userData: ", error);
+      console.error("Lỗi khi kiểm tra userData:", error);
     }
   };
+
   return (
     <View style={styles.cartcontainer}>
       <View style={styles.header}>

@@ -19,6 +19,8 @@ import React, { useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Snackbar } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCart, getCartAsync, addToCartAsync } from "../redux/CartSlice";
 const auth = getAuth(app);
 const database = getDatabase(app);
 const LoginAndRegister = () => {
@@ -45,6 +47,8 @@ const LoginAndRegister = () => {
   const [passwordAgain, setPasswordAgain] = useState("");
   const [name, setName] = useState("");
 
+  const dispatch = useDispatch();
+  const cart = useSelector(selectCart);
   // save data user
   const saveUserData = (userId, email, name, token) => {
     const db = getDatabase(); // Tạo kết nối tới Firebase Realtime Database
@@ -73,13 +77,12 @@ const LoginAndRegister = () => {
         password
       );
       const user = userCredential.user;
+      // mere cart
 
       // Lấy token từ user
       const token = await user.getIdToken();
 
       // Lưu token vào localStorage hoặc AsyncStorage nếu cần
-      // Ví dụ với AsyncStorage:
-      // await AsyncStorage.setItem("userToken", token);
 
       await AsyncStorage.setItem("userData", JSON.stringify(token));
       showSnackbar("Login successful!", "success");
@@ -91,6 +94,22 @@ const LoginAndRegister = () => {
       }, 2000);
       const storedData = await AsyncStorage.getItem("userData");
       console.log("token_login", storedData);
+      // Lấy giỏ hàng từ AsyncStorage
+      const cartLocal = await AsyncStorage.getItem("cart");
+      const localCart = cartLocal ? JSON.parse(cartLocal) : {};
+      console.log("local", localCart);
+
+      if (Object.keys(localCart).length > 0) {
+        for (const item of Object.values(localCart)) {
+          console.log("cart", item);
+          await dispatch(addToCartAsync(item));
+        }
+        await dispatch(getCartAsync());
+
+        await AsyncStorage.removeItem("cart");
+      } else {
+        console.log("error");
+      }
     } catch (error) {
       showSnackbar("Wrong password or Email", "error");
     }
