@@ -89,6 +89,7 @@ const Products = ({
       id: item.id,
       pricesale: item.pricesale,
       price: item.price,
+      sale: item.sale,
     });
   };
 

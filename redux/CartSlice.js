@@ -219,9 +219,21 @@ export const clearCartAsync = () => async (dispatch) => {
   const user = auth.currentUser;
 
   if (user) {
-    const userId = user.uid;
-    const cartRef = ref(database, `carts/${userId.uid}`);
-    await remove(cartRef); // Xóa giỏ hàng từ Firebase
-    dispatch(clearCart()); // Xóa giỏ hàng trong Redux store
+    const userId = user.uid; // Lấy UID của user
+    const cartRef = ref(database, `carts/${userId}`); // Đường dẫn đúng tới giỏ hàng của user
+
+    try {
+      console.log("Đang xóa giỏ hàng từ Firebase...");
+      await remove(cartRef); // Xóa giỏ hàng từ Firebase
+      console.log("Giỏ hàng đã bị xóa khỏi Firebase");
+
+      // Xóa giỏ hàng trong Redux store
+      dispatch(clearCart());
+      console.log("Giỏ hàng đã bị xóa khỏi Redux store");
+    } catch (error) {
+      console.error("Lỗi khi xóa giỏ hàng từ Firebase:", error);
+    }
+  } else {
+    console.log("Không có người dùng đăng nhập.");
   }
 };

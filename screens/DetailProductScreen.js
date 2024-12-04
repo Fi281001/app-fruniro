@@ -32,7 +32,8 @@ const DetailProductScreen = () => {
     setShowValue((prevItem) => prevItem + 4);
   };
   const route = useRoute();
-  const { imgSrc, title, id, price, pricesale, name } = route.params || {};
+  const { imgSrc, title, id, price, pricesale, name, sale } =
+    route.params || {};
   const [selectedSize, setSelectedSize] = useState("M");
   const [selectedColor, setSelectedColor] = useState("#B11D1D");
   const [quantity, setQuantity] = useState(1);
@@ -44,6 +45,7 @@ const DetailProductScreen = () => {
     nav.navigate("Cart");
   };
   const redirectCompare = () => {
+    // Sau khi kiểm tra, bạn có thể điều hướng
     nav.navigate("Compare", {
       imgSrc,
       title,
@@ -51,6 +53,7 @@ const DetailProductScreen = () => {
       id,
       pricesale,
       price,
+      sale,
     });
   };
   const increaseQuantity = () => {

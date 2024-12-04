@@ -67,7 +67,7 @@ const CartScreen = () => {
 
       if (userData) {
         alert("CheckOut thành công!");
-        dispatch(clearCartAsync());
+        await dispatch(clearCartAsync());
       } else {
         Alert.alert(
           "Chưa đăng nhập",
