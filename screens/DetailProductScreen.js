@@ -103,6 +103,14 @@ const DetailProductScreen = () => {
   }, [dispatch]); // Chỉ chạy khi `dispatch` thay đổi, nếu cần thiết có thể thêm các dependencies khác
 
   const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
+
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const handleScroll = (event) => {
+    const contentOffsetY = event.nativeEvent.contentOffset.y;
+    setIsScrolled(contentOffsetY > 100); // Nếu cuộn xuống 100px thì thay đổi màu
+  };
+
   return (
     <View
       style={{
@@ -110,7 +118,7 @@ const DetailProductScreen = () => {
         position: "relative",
       }}
     >
-      <View style={styles.iconContainer}>
+      <View style={[styles.iconContainer, isScrolled && styles.scrolled]}>
         <View style={styles.icon}>
           <TouchableOpacity onPress={() => nav.goBack()}>
             <MaterialIcons name="arrow-back" size={30} color="black" />
@@ -129,7 +137,7 @@ const DetailProductScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView ref={scrollRef}>
+      <ScrollView onScroll={handleScroll} ref={scrollRef}>
         <View style={styles.imagecontainer}>
           <Image source={{ uri: imgSrc }} style={styles.image} />
         </View>
@@ -362,13 +370,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   iconContainer: {
-    marginTop: 40,
+    backgroundColor: "transparent",
     position: "absolute", // Để các icon nổi lên trên hình ảnh
     flexDirection: "row",
-    height: 50,
     justifyContent: "space-between", // Đặt các icon ra hai bên
     width: "100%", // Để các icon trải rộng ngang
     zIndex: 10, // Đảm bảo các icon hiển thị lên trên ảnh
+    height: 80,
+    paddingTop: 30,
+  },
+  scrolled: {
+    backgroundColor: "white", // Màu trắng khi cuộn xuống 100px
   },
   icon: {
     padding: 10, // Thêm khoảng cách xung quanh icon

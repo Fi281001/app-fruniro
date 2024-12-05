@@ -62,35 +62,41 @@ const CartScreen = () => {
   // check out
   const handleCheckOut = async () => {
     try {
-      const userData = await AsyncStorage.getItem("userData");
-      console.log("userData:", userData);
-
-      if (userData) {
-        alert("CheckOut thành công!");
-        await dispatch(clearCartAsync());
-      } else {
+      if (cart.length === 0) {
         Alert.alert(
-          "Chưa đăng nhập",
-          "Bạn chưa đăng nhập. Bạn có muốn chuyển đến trang login?",
-          [
-            {
-              text: "Hủy",
-              onPress: () => console.log("Đã hủy chuyển đến login"),
-              style: "cancel",
-            },
-            {
-              text: "OK",
-              onPress: () => {
-                console.log("Chuyển đến trang login");
-                try {
-                  nav.navigate("Login");
-                } catch (error) {
-                  console.error("Không thể chuyển đến trang Login:", error);
-                }
-              },
-            },
-          ]
+          "Giỏ hàng trống",
+          "Giỏ hàng của bạn hiện tại không có sản phẩm."
         );
+        return; // Exit early if cart is empty
+      } else {
+        const userData = await AsyncStorage.getItem("userData");
+        if (userData) {
+          alert("CheckOut thành công!");
+          await dispatch(clearCartAsync());
+        } else {
+          Alert.alert(
+            "Chưa đăng nhập",
+            "Bạn chưa đăng nhập. Bạn có muốn chuyển đến trang login?",
+            [
+              {
+                text: "Hủy",
+                onPress: () => console.log("Đã hủy chuyển đến login"),
+                style: "cancel",
+              },
+              {
+                text: "OK",
+                onPress: () => {
+                  console.log("Chuyển đến trang login");
+                  try {
+                    nav.navigate("Login");
+                  } catch (error) {
+                    console.error("Không thể chuyển đến trang Login:", error);
+                  }
+                },
+              },
+            ]
+          );
+        }
       }
     } catch (error) {
       console.error("Lỗi khi kiểm tra userData:", error);
@@ -126,10 +132,6 @@ const CartScreen = () => {
       {/* footer cart check out */}
       <View style={styles.footer}>
         <View style={styles.bottomContentContainer}>
-          {/* <View style={styles.flexRowContainer}>
-            <Text style={styles.titleText}>Total Price:</Text>
-            <Text style={styles.priceText}>{formattedTotalPrice}</Text>
-          </View> */}
           <View style={styles.flexRowContainer}>
             <Text style={styles.titleText}>Total Quantity:</Text>
             <Text style={styles.priceText}>{totalQuantity}</Text>

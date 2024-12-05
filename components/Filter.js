@@ -13,15 +13,6 @@ import {
   GestureHandlerRootView,
   PanGestureHandler,
 } from "react-native-gesture-handler";
-import Animated, {
-  Easing,
-  withTiming,
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  interpolate,
-  Extrapolate,
-} from "react-native-reanimated";
 
 // Lấy chiều rộng và chiều cao màn hình
 const { width, height } = Dimensions.get("window");
@@ -44,7 +35,6 @@ const Filter = ({
     setSortValue(value);
     onHandleSortValueChange(value); // Truyền giá trị mới về Shop
   };
-  const [drawerOpen, setDrawerOpen] = useState(false); // State to track if Drawer is open
 
   return (
     <GestureHandlerRootView style={styles.container}>
@@ -67,7 +57,7 @@ const Filter = ({
 
         {/* Options */}
         <View style={styles.options}>
-          <View style={styles.pickerContainer}>
+          <View style={[styles.pickerContainer, { zIndex: 99999 }]}>
             <Text style={{ fontSize: 15 }}>Show</Text>
             <DropDownPicker
               open={showOpen}
@@ -82,11 +72,12 @@ const Filter = ({
               setItems={() => {}}
               containerStyle={styles.dropdownContainer}
               style={styles.dropdown}
-              dropDownStyle={styles.dropdownList}
+              dropDownContainerStyle={styles.dropdownList}
+              zIndex={1000} // Đặt thứ tự trên các thành phần khác
             />
           </View>
 
-          <View style={styles.pickerContainer}>
+          <View style={[styles.pickerContainer, { zIndex: 9999 }]}>
             <Text style={{ fontSize: 15 }}>Sort</Text>
             <DropDownPicker
               open={sortOpen}
@@ -100,7 +91,8 @@ const Filter = ({
               setItems={() => {}}
               containerStyle={styles.dropdownContainer}
               style={styles.dropdown}
-              dropDownStyle={styles.dropdownList}
+              dropDownContainerStyle={styles.dropdownList}
+              zIndex={99999} // Đặt thấp hơn dropdown trên
             />
           </View>
         </View>
@@ -133,6 +125,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10,
     marginLeft: 10,
+    position: "relative",
   },
   dropdownContainer: {
     height: 10,
@@ -141,9 +134,12 @@ const styles = StyleSheet.create({
   dropdown: {
     backgroundColor: "#fff",
     borderRadius: 5,
+    zIndex: 99999,
+    elevation: 10,
   },
   dropdownList: {
     backgroundColor: "#fff",
+    zIndex: 99999,
   },
   drawer: {
     position: "absolute",

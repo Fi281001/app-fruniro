@@ -1,8 +1,15 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import data from "../data/data.json";
-
+import { useNavigationState } from "@react-navigation/native";
 const Products = ({
   show,
   ShowValue,
@@ -78,9 +85,6 @@ const Products = ({
     }
   }, [length, onLengthChange]);
 
-  // Điều kiện để hiển thị paginatedProducts chỉ khi ở màn hình ProductScreen
-  const isProductScreen = route.name === "ProductScreen"; // Kiểm tra tên màn hình hiện tại
-
   const gotoDetail = (item) => {
     navigation.navigate("Detail", {
       imgSrc: item.imgSrc,
@@ -92,36 +96,50 @@ const Products = ({
       sale: item.sale,
     });
   };
+  // Điều kiện để hiển thị paginatedProducts chỉ khi ở màn hình ProductScreen
+
+  const isCurrentScreen = useNavigationState(
+    (state) => state.routes[state.index].name === "Products"
+  );
+  const productsToDisplay = isCurrentScreen ? paginatedProducts : displayItems;
 
   return (
     <View>
       <View style={styles.productList}>
         {/* Hiển thị sản phẩm theo điều kiện */}
-        {(isProductScreen ? paginatedProducts : displayItems).map((item) => (
+        {productsToDisplay.map((item) => (
           <View key={item.id} style={styles.productContainer}>
             <TouchableOpacity onPress={() => gotoDetail(item)}>
               {item.sale && (
                 <Text
                   style={[
                     styles.sale,
-                    { backgroundColor: item.sale === "New" ? "green" : "red" },
+                    {
+                      backgroundColor: item.sale === "New" ? "green" : "red",
+                    },
                   ]}
                 >
                   {item.sale}
                 </Text>
               )}
               <Image source={{ uri: item.imgSrc }} style={styles.image} />
-              <Text style={styles.name}>{item.name}</Text>
-              <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
-                {item.title}
-              </Text>
+              <View style={{ paddingLeft: 10, paddingBottom: 10 }}>
+                <Text style={styles.name}>{item.name}</Text>
+                <Text
+                  style={styles.title}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {item.title}
+                </Text>
 
-              <Text style={styles.price}>
-                {item.pricesale
-                  ? `Rp ${item.pricesale}`
-                  : "Price not available"}
-              </Text>
-              <Text style={styles.price2}>{item.price}</Text>
+                <Text style={styles.price}>
+                  {item.pricesale
+                    ? `Rp ${item.pricesale}`
+                    : "Price not available"}
+                </Text>
+                <Text style={styles.price2}>{item.price}</Text>
+              </View>
             </TouchableOpacity>
           </View>
         ))}
@@ -138,17 +156,19 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-between",
     paddingHorizontal: 30,
+    zIndex: 0,
   },
   productContainer: {
+    backgroundColor: "white",
     position: "relative",
     flexBasis: "48%",
     marginBottom: 20,
     borderRadius: 10,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 4 }, // Tăng chiều cao của bóng
+    shadowOpacity: 0.5, // Tăng độ rõ của bóng (gợi ý: thử giá trị từ 0.4 đến 0.7)
+    shadowRadius: 6, // Tăng kích thước vùng mờ của bóng
+    elevation: 10, // Tăng độ rõ của bóng trên Android
   },
   sale: {
     position: "absolute",
@@ -164,7 +184,8 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: 220,
-    borderRadius: 10,
+    borderTopLeftRadius: 10, // Tạo độ bo cho góc trái của border trên
+    borderTopRightRadius: 10,
     marginBottom: 10,
     resizeMode: "cover",
   },

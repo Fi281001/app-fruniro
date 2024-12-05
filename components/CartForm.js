@@ -10,7 +10,9 @@ import {
 } from "../redux/CartSlice";
 const CartForm = ({ item }) => {
   const [quantity, setQuantity] = useState(1);
-
+  // redux
+  const dispatch = useDispatch();
+  const cart = useSelector(selectCart);
   const handleIncrease = () => {
     setQuantity((prev) => prev + 1);
     dispatch(updateCartAsync(item.id, quantity + 1));
@@ -20,10 +22,6 @@ const CartForm = ({ item }) => {
     setQuantity((prev) => prev - 1);
     dispatch(updateCartAsync(item.id, quantity - 1));
   };
-
-  // redux
-  const dispatch = useDispatch();
-  const cart = useSelector(selectCart);
 
   const handleDelete = (id) => {
     const cartItemId = id;

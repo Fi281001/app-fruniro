@@ -40,7 +40,7 @@ const ProductsScreen = () => {
     }
   };
   const [drawerVisible, setDrawerVisible] = useState(false);
-
+  // model
   const handleOpenDrawer = () => {
     setDrawerVisible(true);
   };
@@ -53,7 +53,6 @@ const ProductsScreen = () => {
     setDrawerVisible(false);
   };
 
-  // model
   const [minValue, setMinValue] = useState(150000);
   const [maxValue, setMaxValue] = useState(8000000);
   const [selectedColor, setSelectedColor] = useState([]);
@@ -188,12 +187,15 @@ const ProductsScreen = () => {
       </Modal>
       <ScrollView ref={scrollRef}>
         <Rectangle title="Shop" />
-        <Filter
-          onHandleShowValueChange={handleShowValueChange}
-          onHandleSortValueChange={handleSortValueChange}
-          onOpenDrawer={handleOpenDrawer} // Truyền hàm mở Drawer vào Filter
-        />
-        <View>
+        <View style={{ zIndex: 1 }}>
+          <Filter
+            onHandleShowValueChange={handleShowValueChange}
+            onHandleSortValueChange={handleSortValueChange}
+            onOpenDrawer={handleOpenDrawer} // Truyền hàm mở Drawer vào Filter
+          />
+        </View>
+
+        <View style={{ zIndex: 0 }}>
           <Text style={styles.name}>Products</Text>
           {(minValue !== 150000 || maxValue !== 8000000) && ( // Kiểm tra nếu min và max không phải giá trị mặc định
             <View style={styles.chip}>

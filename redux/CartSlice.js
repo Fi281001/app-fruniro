@@ -23,7 +23,7 @@ const CartSlice = createSlice({
     removeFromCart: (state, action) => {
       // Xóa sản phẩm khỏi Redux store
       state.cart = state.cart.filter(
-        (item) => item.productId !== action.payload
+        (item) => item.cartItemId !== action.payload
       );
     },
     clearCart: (state) => {
@@ -159,57 +159,62 @@ export const removeFromCartAsync = (cartItemId) => async (dispatch) => {
 // update quantity cart
 export const updateCartAsync =
   (cartItemId, newQuantity) => async (dispatch) => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
     try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-
-      // Nếu người dùng đã đăng nhập
       if (user) {
-        const userId = user.uid;
-        const cartRef = ref(database, `carts/${userId}/${cartItemId}`);
+        // Người dùng đã đăng nhập, cập nhật giỏ hàng trên Firebase
+        const cartRef = ref(database, `carts/${user.uid}/${cartItemId}`);
 
-        if (newQuantity > 0) {
-          // Cập nhật số lượng sản phẩm trong Firebase
-          await update(cartRef, { quantity: newQuantity });
+        // Lấy thông tin sản phẩm hiện tại từ Firebase
+        const cartSnapshot = await get(cartRef);
+        if (cartSnapshot.exists()) {
+          const existingProduct = cartSnapshot.val();
+
+          if (newQuantity > 0) {
+            // Cập nhật số lượng sản phẩm
+            await set(cartRef, {
+              ...existingProduct,
+              quantity: newQuantity,
+            });
+          } else if (newQuantity === 0) {
+            // Xóa sản phẩm khỏi giỏ hàng nếu số lượng <= 0
+            await remove(cartRef);
+            dispatch(removeFromCart(cartItemId));
+          }
+
+          // Lấy lại giỏ hàng để đảm bảo đồng bộ Redux
+          dispatch(getCartAsync());
         } else {
-          // Nếu số lượng <= 0, xóa sản phẩm khỏi giỏ hàng trong Firebase
-          await remove(cartRef);
-          dispatch(removeFromCart(cartItemId));
+          console.error("Sản phẩm không tồn tại trong giỏ hàng trên Firebase");
         }
-
-        // Đồng bộ lại giỏ hàng sau khi cập nhật
-        dispatch(getCartAsync());
       } else {
-        // Nếu người dùng chưa đăng nhập, cập nhật giỏ hàng trong AsyncStorage
+        // Người dùng chưa đăng nhập, cập nhật giỏ hàng trong AsyncStorage
         const cartLocal = await AsyncStorage.getItem("cart");
         const localCart = cartLocal ? JSON.parse(cartLocal) : {};
 
-        if (newQuantity > 0) {
-          // Cập nhật số lượng sản phẩm trong giỏ hàng local
-          localCart[cartItemId] = {
-            ...localCart[cartItemId],
-            quantity: newQuantity,
-          };
+        if (localCart[cartItemId]) {
+          if (newQuantity > 0) {
+            // Cập nhật số lượng sản phẩm trong giỏ hàng local
+            localCart[cartItemId].quantity = newQuantity;
+          } else if (newQuantity === 0) {
+            // Xóa sản phẩm khỏi giỏ hàng nếu số lượng <= 0
+            delete localCart[cartItemId];
+          }
+
+          // Lưu giỏ hàng đã cập nhật vào AsyncStorage
+          await AsyncStorage.setItem("cart", JSON.stringify(localCart));
+
+          // Cập nhật Redux store để đồng bộ với AsyncStorage
+          const updatedCart = Object.values(localCart);
+          dispatch(setCart(updatedCart));
         } else {
-          // Nếu số lượng <= 0, xóa sản phẩm khỏi giỏ hàng local
-          delete localCart[cartItemId];
+          console.error("Sản phẩm không tồn tại trong giỏ hàng local");
         }
-
-        // Lưu giỏ hàng đã cập nhật vào AsyncStorage
-        await AsyncStorage.setItem("cart", JSON.stringify(localCart));
-
-        // Cập nhật Redux store
-        const updatedCart = Object.values(localCart);
-        dispatch(removeFromCart(cartItemId));
-
-        // Đồng bộ lại giỏ hàng từ AsyncStorage
-        dispatch(setCart(updatedCart));
       }
     } catch (error) {
-      console.error(
-        "Lỗi khi cập nhật số lượng sản phẩm trong giỏ hàng:",
-        error
-      );
+      console.error("Lỗi khi cập nhật giỏ hàng:", error);
     }
   };
 
@@ -223,13 +228,10 @@ export const clearCartAsync = () => async (dispatch) => {
     const cartRef = ref(database, `carts/${userId}`); // Đường dẫn đúng tới giỏ hàng của user
 
     try {
-      console.log("Đang xóa giỏ hàng từ Firebase...");
       await remove(cartRef); // Xóa giỏ hàng từ Firebase
-      console.log("Giỏ hàng đã bị xóa khỏi Firebase");
 
       // Xóa giỏ hàng trong Redux store
       dispatch(clearCart());
-      console.log("Giỏ hàng đã bị xóa khỏi Redux store");
     } catch (error) {
       console.error("Lỗi khi xóa giỏ hàng từ Firebase:", error);
     }
