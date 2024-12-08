@@ -95,6 +95,8 @@ const DetailProductScreen = () => {
       quantity,
     };
     dispatch(addToCartAsync(cartItem));
+    console.log("cartItem", cartItem);
+
     alert("add to cart successful");
   };
 
